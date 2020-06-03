@@ -17,10 +17,12 @@ class _UploadPageState extends State<UploadPage> {
   dynamic data;
   Modelproverb probs;
   var isLoading = true;
+  var isLoad = true;
 
   Future<dynamic> getData() async {
     setState(() {
       isLoading = true;
+      isLoad = false;
     });
     var response = await http.get(Uri.encodeFull("http://10.0.2.2:5000/get"),
         headers: {"Accept": "application/json"});
@@ -29,6 +31,7 @@ class _UploadPageState extends State<UploadPage> {
       probs = Modelproverb.fromJson(data);
       setState(() {
         isLoading = false;
+        isLoad = true;
       });
     } else {
       throw Exception('Failed to load photos');
@@ -60,16 +63,19 @@ class _UploadPageState extends State<UploadPage> {
       ),
       body: isLoading
           ? Center(
-              child: RaisedButton(
-                shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0)),
-                color: Colors.orange,
-                elevation: 5,
-                textColor: Colors.white,
-                child: new Text("Get Result"),
-                onPressed: getData,
-              ),
-            )
+              child: isLoad
+                  ? RaisedButton(
+                      shape: new RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(30.0)),
+                      color: Colors.orange,
+                      elevation: 5,
+                      textColor: Colors.white,
+                      child: new Text("Get Result"),
+                      onPressed: getData,
+                    )
+                  : Center(
+                      child: CircularProgressIndicator(),
+                    ))
           : ListView.builder(
               itemCount: 1,
               itemBuilder: (BuildContext context, int index) {
